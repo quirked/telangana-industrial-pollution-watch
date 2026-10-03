@@ -107,6 +107,8 @@ This document preserves the chronological implementation history of the hackatho
 - Started the application with the exact production command `gunicorn app:app` and `PORT=5061`. Gunicorn bound to `0.0.0.0:5061`; `/` and `/health` both returned HTTP 200.
 - The first health probe ran before the Gunicorn worker finished booting and failed once; the existing retry loop succeeded on the next attempt. No application change was required.
 - Stopped the temporary Gunicorn verification process cleanly. No Render service was created and no deployment was initiated.
+- Committed the Render preparation as `2a3424c` (`Prepare Flask app for Render deployment`) and pushed it normally to `origin/main` without rewriting history.
+- Verified local `main`, local `origin/main`, and GitHub `main` all pointed to `2a3424c30e54cec57f2cb39d4168c193323a45a3` after the push.
 
 ## Current Implementation State
 
