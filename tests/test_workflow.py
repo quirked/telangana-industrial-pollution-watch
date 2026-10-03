@@ -139,3 +139,14 @@ def test_complete_citizen_to_authority_workflow_and_restart(app, client, tmp_pat
     restart_page = restarted.test_client().get(location).get_data(as_text=True)
     assert "Action in Progress" in restart_page
     assert report_code in restart_page
+
+
+def test_render_data_directory_configuration(monkeypatch, tmp_path):
+    data_dir = tmp_path / "render-data"
+    monkeypatch.setenv("DATA_DIR", str(data_dir))
+    render_app = create_app({"TESTING": True, "SKIP_SEED": True})
+
+    assert render_app.config["DATABASE"] == str(data_dir / "pollution.db")
+    assert render_app.config["UPLOAD_FOLDER"] == str(data_dir / "uploads")
+    assert (data_dir / "pollution.db").exists()
+    assert (data_dir / "uploads").is_dir()

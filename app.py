@@ -122,10 +122,13 @@ def validate_report_form(form, image):
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     root = Path(app.root_path)
+    data_dir = os.environ.get("DATA_DIR")
+    default_database = Path(data_dir, "pollution.db") if data_dir else Path(app.instance_path, "pollution.db")
+    default_uploads = Path(data_dir, "uploads") if data_dir else root / "uploads"
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY", "telangana-hackathon-demo-key"),
-        DATABASE=str(Path(app.instance_path, "pollution.db")),
-        UPLOAD_FOLDER=str(root / "uploads"),
+        DATABASE=os.environ.get("DATABASE_PATH", str(default_database)),
+        UPLOAD_FOLDER=os.environ.get("UPLOAD_FOLDER", str(default_uploads)),
         MAX_CONTENT_LENGTH=MAX_UPLOAD_BYTES,
     )
     if test_config:
@@ -309,4 +312,8 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5050, debug=False)
+    app.run(
+        host=os.environ.get("HOST", "127.0.0.1"),
+        port=int(os.environ.get("PORT", "5050")),
+        debug=False,
+    )

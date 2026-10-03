@@ -37,6 +37,22 @@ cd /home/raghav/industrial-pollution-reporting
 
 The integration suite covers seeded pages, validation, report creation, image serving, authority updates, public timeline visibility, dashboard visibility, 404 handling, and persistence after application recreation.
 
+## Render deployment configuration
+
+The repository is prepared for a Render Python web service but has not been deployed.
+
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+- Python version: `3.11.16` from `.python-version`
+- Health check path: `/health`
+- Recommended environment variable: set `SECRET_KEY` to a strong generated value in Render.
+
+The default local paths remain `instance/pollution.db` and `uploads/`. To retain SQLite data and uploaded evidence on Render, attach a paid persistent disk at `/var/data` and set `DATA_DIR=/var/data`. The database will then use `/var/data/pollution.db` and evidence will use `/var/data/uploads/` without changing the application architecture.
+
+Without a persistent disk, Render's filesystem is ephemeral. The application will run, but submitted reports and uploaded evidence can be lost on a deploy, restart, or free-service spin-down.
+
+References: [Render Flask deployment guide](https://render.com/docs/deploy-flask) and [Render persistent disk documentation](https://render.com/docs/disks).
+
 ## Demo flow
 
 1. Open `/report` and enter:

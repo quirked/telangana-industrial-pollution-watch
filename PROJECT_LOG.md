@@ -91,6 +91,23 @@ This document preserves the chronological implementation history of the hackatho
 - Pushed the existing local `main` history normally and configured it to track `origin/main`; no force push or history rewrite was used.
 - Initial published tip before this documentation entry: `3b88c0862e574e366981d4e3dd7599eeb32fbe64`.
 
+### 2026-10-03 06:24 UTC — Render deployment preparation
+
+- Objective: make the existing Flask/SQLite application Render-ready without deploying it or changing its user-facing behavior.
+- Verified the GitHub repository was fully synchronized before changes: local `main`, `origin/main`, and the remote branch all pointed to `dfa3203c2a8259e9e5bf18296688669240bbfa6d` with a clean worktree.
+- Confirmed `app.py` already exposes the WSGI application as module-level `app = create_app()`.
+- Consulted Render's current official Flask and persistent-disk documentation. Decision: retain Flask, SQLite, local uploads, and the existing architecture; add deployment configuration only.
+- Added pinned production server dependency `gunicorn==26.2.0` to `requirements.txt` and installed it in the existing `sao` Python environment.
+- Added `.python-version` with `3.11.16` to match the Python version used to build and test the MVP instead of relying on Render's changing default.
+- Updated `app.py` so `HOST` and `PORT` can configure the development entrypoint while preserving local defaults `127.0.0.1:5050`. Gunicorn production startup does not invoke this development server block.
+- Added optional `DATA_DIR`, `DATABASE_PATH`, and `UPLOAD_FOLDER` configuration. With no environment variables, paths remain exactly `instance/pollution.db` and `uploads/`; with `DATA_DIR=/var/data`, SQLite and uploads can share one Render persistent disk.
+- Updated `README.md` with Render build/start commands, health endpoint, `SECRET_KEY` guidance, persistent-disk configuration, and the explicit risk of ephemeral filesystem data loss.
+- Added an automated test confirming `DATA_DIR` creates and selects the expected SQLite and upload paths.
+- Ran Python compilation and the full test suite: **4 passed in 0.31s**.
+- Started the application with the exact production command `gunicorn app:app` and `PORT=5061`. Gunicorn bound to `0.0.0.0:5061`; `/` and `/health` both returned HTTP 200.
+- The first health probe ran before the Gunicorn worker finished booting and failed once; the existing retry loop succeeded on the next attempt. No application change was required.
+- Stopped the temporary Gunicorn verification process cleanly. No Render service was created and no deployment was initiated.
+
 ## Current Implementation State
 
 ### Working
@@ -108,6 +125,7 @@ This document preserves the chronological implementation history of the hackatho
 - Responsive desktop/mobile design and friendly errors
 - Automated critical-path tests and exact live demo scenario
 - Persistence across application restart
+- Render production startup and optional persistent-data path configuration
 
 ### Partially Working
 
@@ -141,3 +159,4 @@ This document preserves the chronological implementation history of the hackatho
 - `static/js/app.js` — image preview and flash-message enhancement.
 - `static/favicon.svg` — local product favicon.
 - `tests/test_workflow.py` — end-to-end workflow, validation, error, evidence, dashboard, and restart tests.
+- `.python-version` — Python 3.11.16 runtime pin for Render.
