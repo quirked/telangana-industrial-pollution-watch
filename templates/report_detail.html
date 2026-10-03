@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}{{ report.report_code }} | Pollution Watch{% endblock %}
+{% block content %}
+<section class="detail-hero"><div class="container">
+  <div class="breadcrumb"><a href="{{ url_for('reports') }}">Reported incidents</a><span>/</span><span>{{ report.report_code }}</span></div>
+  <div class="detail-title"><div><div class="card-meta"><span class="status status-{{ status_slug(report.status) }}">{{ report.status }}</span><span>Reported incident</span></div><h1>{{ report.title }}</h1><p class="report-code">{{ report.report_code }}</p></div><a class="button button-ghost light" href="{{ url_for('my_reports') }}">Back to my reports</a></div>
+</div></section>
+<section class="section detail-section"><div class="container detail-grid">
+  <div class="detail-main">
+    <article class="card evidence-card"><div class="card-heading"><div><span class="eyebrow">Submitted evidence</span><h2>Incident image</h2></div><span class="verified-label">Citizen supplied</span></div><img src="{{ url_for('uploaded_file', filename=report.image_filename) }}" alt="Evidence submitted for {{ report.title }}"><p class="caption">Image associated with {{ report.report_code }}. It records a submitted observation and is not independent scientific verification.</p></article>
+    <article class="card details-card"><div class="card-heading"><div><span class="eyebrow">Incident</span><h2>Observation details</h2></div></div><p class="description">{{ report.description }}</p><dl class="detail-list"><div><dt>What was observed</dt><dd>{{ report.observation_type }}</dd></div><div><dt>Industry type</dt><dd>{{ report.industry_type or 'Not known' }}</dd></div><div><dt>Industrial unit</dt><dd>{{ report.industrial_unit_name or 'Not provided' }}</dd></div><div><dt>Date and time</dt><dd>{{ report.incident_date }} at {{ report.incident_time }}</dd></div></dl></article>
+    <article class="card location-card"><div class="card-heading"><div><span class="eyebrow">Location</span><h2>{{ report.locality }}, {{ report.district }}</h2></div></div><p>{{ report.address_landmark }}</p><div class="jurisdiction-box"><span>Assigned jurisdiction</span><strong>{{ report.assigned_jurisdiction }} District</strong><small>Prototype assignment only — no live government routing</small></div>{% if report.latitude %}<p class="coordinates">Coordinates: {{ report.latitude }}, {{ report.longitude }}</p>{% endif %}</article>
+  </div>
+  <aside class="detail-sidebar">
+    <article class="card status-card"><span class="eyebrow">Current status</span><div class="current-status status-{{ status_slug(report.status) }}"><span></span><strong>{{ report.status }}</strong></div><p>{{ status_descriptions[report.status] }}</p><small>Last updated {{ report.updated_at|datetime }}</small></article>
+    <article class="card timeline-card"><div class="card-heading"><div><span class="eyebrow">Tracking</span><h2>Status timeline</h2></div></div><ol class="timeline">{% for item in history %}<li class="timeline-item {{ 'active' if loop.last }}"><span class="timeline-marker"></span><div><strong>{{ item.status }}</strong><time>{{ item.created_at|datetime }}</time><small>{{ item.actor }} update</small>{% if item.public_remark %}<p>{{ item.public_remark }}</p>{% endif %}{% if item.action_taken %}<p><b>Action:</b> {{ item.action_taken }}</p>{% endif %}</div></li>{% endfor %}</ol></article>
+    <article class="card response-card"><span class="eyebrow">Authority response</span>{% if report.authority_remark or report.action_taken %}{% if report.authority_remark %}<h3>Public remark</h3><p>{{ report.authority_remark }}</p>{% endif %}{% if report.action_taken %}<h3>Action taken</h3><p>{{ report.action_taken }}</p>{% endif %}<small>Updated {{ report.updated_at|datetime }}</small>{% else %}<div class="pending-response"><span>⌛</span><p>No authority response has been added yet.</p></div>{% endif %}</article>
+  </aside>
+</div></section>
+{% endblock %}

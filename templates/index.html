@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pulse-dot"></span> Citizen reporting • Telangana</span>
+      <h1>Report industrial pollution.<br><span>Track the response.</span></h1>
+      <p>Help document visible industrial pollution incidents across Telangana and follow each report from submission through authority action.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="{{ url_for('submit_report') }}">Report pollution <span>→</span></a>
+        <a class="button button-ghost" href="{{ url_for('reports') }}">View reported incidents</a>
+      </div>
+      <p class="hero-note">Designed for citizens, local bodies, and environmental authorities.</p>
+    </div>
+    <div class="hero-panel">
+      <div class="panel-top"><span>Incident response overview</span><span class="live-label">LIVE DEMO</span></div>
+      <div class="hero-stat"><strong>{{ counts.Total }}</strong><span>reported observations</span></div>
+      <div class="mini-grid">
+        <div><span class="mini-dot reported"></span><strong>{{ counts['Reported'] }}</strong><small>New reports</small></div>
+        <div><span class="mini-dot review"></span><strong>{{ counts['Under Review'] }}</strong><small>Under review</small></div>
+        <div><span class="mini-dot action"></span><strong>{{ counts['Action in Progress'] }}</strong><small>Action underway</small></div>
+        <div><span class="mini-dot resolved"></span><strong>{{ counts['Resolved'] }}</strong><small>Resolved</small></div>
+      </div>
+      <div class="jurisdiction-strip"><span>Coverage</span><strong>33 Telangana districts</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="section process-section">
+  <div class="container">
+    <div class="section-heading"><div><span class="eyebrow">A transparent path</span><h2>From observation to action</h2></div><p>Every update is recorded so citizens can see how a reported incident progresses.</p></div>
+    <div class="process-grid">
+      {% for number, title, copy in [('01','Observe','Notice visible smoke, discharge, dust, fumes, or waste.'),('02','Report','Add location, incident details, and image evidence.'),('03','Authority reviews','The assigned district can review evidence and record a response.'),('04','Track action','Use the report ID to follow status, remarks, and action taken.')] %}
+      <article class="process-card"><span>{{ number }}</span><h3>{{ title }}</h3><p>{{ copy }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section recent-section">
+  <div class="container">
+    <div class="section-heading"><div><span class="eyebrow">Public transparency</span><h2>Recently reported incidents</h2></div><a class="text-link" href="{{ url_for('reports') }}">View all reports →</a></div>
+    <div class="incident-grid">
+      {% for report in recent %}
+      <a class="incident-card" href="{{ url_for('report_detail', report_code=report.report_code) }}">
+        <img src="{{ url_for('uploaded_file', filename=report.image_filename) }}" alt="Evidence for {{ report.title }}">
+        <div class="incident-card-body"><div class="card-meta"><span class="status status-{{ status_slug(report.status) }}">{{ report.status }}</span><span>{{ report.report_code }}</span></div><h3>{{ report.title }}</h3><p>{{ report.locality }}, {{ report.district }}</p><span class="card-link">Track report →</span></div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="disclaimer-band"><div class="container"><strong>Observation, not accusation.</strong><p>The platform records what a citizen observed. Verification status reflects administrative review and is not, by itself, a legal determination.</p></div></section>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A Telangana hackathon prototype for reporting and tracking visible industrial pollution incidents.">
+  <title>{% block title %}Telangana Industrial Pollution Watch{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+  <div class="prototype-bar">Government of Telangana Hackathon Prototype <span>•</span> Not an officially deployed government service</div>
+  <header class="site-header">
+    <div class="container nav-shell">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="Telangana Industrial Pollution Watch home">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 4C15 12 8 19 8 29a16 16 0 0 0 32 0C40 19 33 12 24 4Z"/><path d="M16 30c5 0 8-3 8-9 3 5 6 8 10 9"/></svg></span>
+        <span><strong>Pollution Watch</strong><small>Telangana</small></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="{{ url_for('reports') }}">Browse reports</a>
+        <a href="{{ url_for('my_reports') }}">My reports</a>
+        <a href="{{ url_for('authority_dashboard') }}">Authority</a>
+        <a class="button button-small" href="{{ url_for('submit_report') }}">Report pollution</a>
+      </nav>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="container flash-stack" role="status">
+      {% for category, message in messages %}<div class="flash flash-{{ category }}">{{ message }}</div>{% endfor %}
+    </div>{% endif %}
+  {% endwith %}
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div><strong>Telangana Industrial Pollution Watch</strong><p>A civic-tech hackathon prototype for transparent incident reporting and response tracking.</p></div>
+      <div><strong>Important note</strong><p>Reports are observations. They do not by themselves establish a scientific finding or legal violation.</p></div>
+      <div><a href="https://tgpcb.cgg.gov.in/" target="_blank" rel="noopener noreferrer">Official TGPCB Resources <span aria-hidden="true">↗</span></a><p>This prototype is not connected to TGPCB systems.</p></div>
+    </div>
+  </footer>
+</body>
+</html>
