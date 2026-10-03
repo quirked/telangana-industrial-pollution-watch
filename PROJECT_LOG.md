@@ -60,6 +60,15 @@ This document preserves the chronological implementation history of the hackatho
 - After restart, requested `INC-2026-0005` from the same SQLite database and received HTTP 200 with the status, remark, and action intact.
 - A separate browser interaction created `INC-2026-0006`; it was preserved rather than deleted because runtime submissions may belong to the user.
 
+### 2026-10-03 05:53 UTC — Repository hygiene and stable MVP commit
+
+- Completed `README.md` with environment-specific run, test, demo, architecture, data, and limitation guidance.
+- Added an automated oversized-upload assertion; the 413 page is verified alongside the form-validation cases.
+- Ran Python compilation successfully and ran the final test suite: **3 passed in 0.31s**.
+- `git diff --cached --check` initially reported extra blank lines at end-of-file and opened its pager. A subsequent command was mistakenly sent to the pager and produced `Pattern not found`; it did not change project files.
+- Exited the pager, mechanically normalized tracked text files to one trailing newline, and re-ran the check with `--no-pager`; it passed.
+- Created root commit `5526b2f` (`Build Telangana pollution incident reporting MVP`) containing 22 project files and 1,098 lines.
+
 ## Current Implementation State
 
 ### Working
